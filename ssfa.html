@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room Area and MSCB Calculator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+        p {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .section {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+        .section h2 {
+            width: 100%;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            width: 48%;
+            margin-bottom: 10px;
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            padding: 12px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .calculate-btn {
+            width: 100%;
+            margin-top: 10px;
+        }
+        .results {
+            margin-top: 30px;
+            padding: 20px;
+            background: #e8f5e8;
+            border-radius: 8px;
+            text-align: center;
+        }
+        #total, #mscb {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .reset-btn {
+            background-color: #f44336;
+        }
+        .reset-btn:hover {
+            background-color: #d32f2f;
+        }
+        @media (max-width: 600px) {
+            .section {
+                flex-direction: column;
+            }
+            .input-group {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Room Area and MSCB Calculator</h1>
+        <p>Enter length and breadth (in meters) for each section to calculate areas. 
+           Total area × 75 = MSCB value (in watts).</p>
+
+        <div class="section" id="bedroom">
+            <h2>Bedroom</h2>
+            <div class="input-group">
+                <label for="bedroom-length">Length (m):</label>
+                <input type="number" id="bedroom-length" placeholder="e.g., 5">
+            </div>
+            <div class="input-group">
+                <label for="bedroom-breadth">Breadth (m):</label>
+                <input type="number" id="bedroom-breadth" placeholder="e.g., 4">
+            </div>
+            <button onclick="calculateArea('bedroom')">Calculate Area</button>
+            <p id="bedroom-area">Area: 0 sq m</p>
+        </div>
+
+        <div class="section" id="balcony">
+            <h2>Balcony</h2>
+            <div class="input-group">
+                <label for="balcony-length">Length (m):</label>
+                <input type="number" id="balcony-length" placeholder="e.g., 3">
+            </div>
+            <div class="input-group">
+                <label for="balcony-breadth">Breadth (m):</label>
+                <input type="number" id="balcony-breadth" placeholder="e.g., 2">
+            </div>
+            <button onclick="calculateArea('balcony')">Calculate Area</button>
+            <p id="balcony-area">Area: 0 sq m</p>
+        </div>
+
+        <div class="section" id="kitchen">
+            <h2>Kitchen</h2>
+            <div class="input-group">
+                <label for="kitchen-length">Length (m):</label>
+                <input type="number" id="kitchen-length" placeholder="e.g., 4">
+            </div>
+            <div class="input-group">
+                <label for="kitchen-breadth">Breadth (m):</label>
+                <input type="number" id="kitchen-breadth" placeholder="e.g., 3">
+            </div>
+            <button onclick="calculateArea('kitchen')">Calculate Area</button>
+            <p id="kitchen-area">Area: 0 sq m</p>
+        </div>
+
+        <div class="section" id="hall">
+            <h2>Hall</h2>
+            <div class="input-group">
+                <label for="hall-length">Length (m):</label>
+                <input type="number" id="hall-length" placeholder="e.g., 6">
+            </div>
+            <div class="input-group">
+                <label for="hall-breadth">Breadth (m):</label>
+                <input type="number" id="hall-breadth" placeholder="e.g., 5">
+            </div>
+            <button onclick="calculateArea('hall')">Calculate Area</button>
+            <p id="hall-area">Area: 0 sq m</p>
+        </div>
+
+        <button class="calculate-btn" onclick="calculateTotal()">Calculate Total Area and MSCB</button>
+        <button class="reset-btn" onclick="resetAll()">Reset All</button>
+
+        <div class="results">
+            <div id="total">Total Area: 0 sq m</div>
+            <div id="mscb">MSCB Value (Total Area × 75): 0 watts</div>
+        </div>
+    </div>
+
+    <script>
+        function calculateArea(room) {
+            const length = parseFloat(document.getElementById(room + '-length').value) || 0;
+            const breadth = parseFloat(document.getElementById(room + '-breadth').value) || 0;
+            const area = length * breadth;
+            document.getElementById(room + '-area').textContent = 'Area: ' + area.toFixed(2) + ' sq m';
+        }
+
+        function calculateTotal() {
+            calculateArea('bedroom');
+            calculateArea('balcony');
+            calculateArea('kitchen');
+            calculateArea('hall');
+
+            const bedroomArea = parseFloat(document.getElementById('bedroom-area').textContent.split(': ')[1]) || 0;
+            const balconyArea = parseFloat(document.getElementById('balcony-area').textContent.split(': ')[1]) || 0;
+            const kitchenArea = parseFloat(document.getElementById('kitchen-area').textContent.split(': ')[1]) || 0;
+            const hallArea = parseFloat(document.getElementById('hall-area').textContent.split(': ')[1]) || 0;
+
+            const totalArea = bedroomArea + balconyArea + kitchenArea + hallArea;
+            const mscb = totalArea * 75;
+
+            document.getElementById('total').textContent = 'Total Area: ' + totalArea.toFixed(2) + ' sq m';
+            document.getElementById('mscb').textContent = 'MSCB Value (Total Area × 75): ' + mscb.toFixed(2) + ' watts';
+        }
+
+        function resetAll() {
+            document.querySelectorAll('input').forEach(input => input.value = '');
+            document.querySelectorAll('[id$="-area"]').forEach(area => area.textContent = 'Area: 0 sq m');
+            document.getElementById('total').textContent = 'Total Area: 0 sq m';
+            document.getElementById('mscb').textContent = 'MSCB Value (Total Area × 75): 0 watts';
+        }
+    </script>
+</body>
+</html>
